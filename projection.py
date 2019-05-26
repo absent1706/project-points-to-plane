@@ -1,10 +1,10 @@
 import numpy as np
 
-def get_projections(P: np.ndarray, N: np.ndarray, points_to_project: np.ndarray) -> np.ndarray:
+def get_projections_to_plane(P: np.ndarray, N: np.ndarray, points: np.ndarray) -> np.ndarray:
     """
-    Returns projections of given "points_to_project" to plane defined by point "P" and normal vector "N"
+    Returns projections of given "points" to plane defined by point "P" and normal vector "N"
     
-    >>> get_projections(np.array([0,0,0]), np.array([0,0,1]), np.array([np.array([1,1,1])]))
+    >>> get_projections_to_plane(np.array([0,0,0]), np.array([0,0,1]), np.array([np.array([1,1,1])]))
     array([[1., 1., 0.]])
     """
     # Obtain A,B,C,D params for plane equation.
@@ -15,4 +15,14 @@ def get_projections(P: np.ndarray, N: np.ndarray, points_to_project: np.ndarray)
     # Calculate projection, see vector formula at https://bit.ly/30GZbRe
     get_projection = lambda p: p - (p.dot(N) + D)/(N.dot(N))*N
     
-    return np.array([get_projection(p) for p in points_to_project])
+    return np.array([get_projection(p) for p in points])
+
+def get_distances_to_plane(P: np.ndarray, N: np.ndarray, points: np.ndarray) -> np.ndarray:
+    """
+    Returns distancesof given "points" to plane defined by point "P" and normal vector "N"
+    
+    >>> get_distances_to_plane(np.array([0,0,0]), np.array([0,0,1]), np.array([np.array([1,1,2])]))
+    array([2.])
+    """    
+    projections = get_projections_to_plane(P, N, points)
+    return np.array([np.linalg.norm(p - proj) for p,proj in zip(points, projections)])
